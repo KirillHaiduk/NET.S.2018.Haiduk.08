@@ -5,29 +5,20 @@
     /// </summary>
     public abstract class BankAccount
     {
-        /// <summary>
-        /// Enum that contains types of Bank Account
-        /// </summary>
-        public enum BalanceType
-        {
-            Base = 1, Silver, Gold, Platinum
-        }
+        public Client Owner;
+
+        public bool Closed;
 
         /// <summary>
         /// The ID number of Bank Account
         /// </summary>
-        public int ID { get; set; }
+        public int AccountNumber { get; set; }
 
         /// <summary>
         /// Firstname of the owner of Bank Account
         /// </summary>
-        public string OwnerFirstname { get; set; }
-
-        /// <summary>
-        /// Lastname of the owner of Bank Account
-        /// </summary>
-        public string OwnerLastname { get; set; }
-
+        public string OwnerInfo => Owner.Firstname + Owner.Lastname;
+                
         /// <summary>
         /// Amount of Bank Account
         /// </summary>
@@ -36,20 +27,16 @@
         /// <summary>
         /// Bonus Points that add or substarct while working with amount
         /// </summary>
-        public int BonusPoints { get; set; }
-
-        /// <summary>
-        /// Type of Bank Account
-        /// </summary>
-        public BalanceType Type { get; set; }
-
+        public double BonusPoints { get; set; }
+                
         /// <summary>
         /// Virtual method for refilling Bank Account
         /// </summary>        
         /// <param name="amount">Amount value</param>        
         /// <returns>Amount after refilling</returns>
-        public virtual decimal Refill(decimal amount)
+        public decimal Deposit(decimal amount)
         {
+            BonusPoints += CalculateBonusPoints(amount);
             return Amount += amount;
         }
 
@@ -58,9 +45,15 @@
         /// </summary>        
         /// <param name="amount">Amount value</param>        
         /// <returns>Amount after write-off</returns>
-        public virtual decimal Debit(decimal amount)
+        public decimal Withdraw(decimal amount)
         {
-            return Amount -= amount;
+            if (IsValidBalance(this, amount))
+            {
+                BonusPoints -= CalculateBonusPoints(amount);
+                Amount -= amount;
+            }
+
+            return Amount;
         }
 
         /// <summary>
@@ -80,5 +73,9 @@
         {
             return;
         }
+
+        public abstract double CalculateBonusPoints(decimal amount);
+
+        public abstract bool IsValidBalance(BankAccount account, decimal amount);
     }    
 }

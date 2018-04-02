@@ -1,4 +1,6 @@
-﻿namespace NET.S._2018.Haiduk._08
+﻿using System;
+
+namespace NET.S._2018.Haiduk._08
 {
     /// <summary>
     /// Class SilverBankAccount inherited from BankAccount
@@ -6,30 +8,24 @@
     public class SilverBankAccount : BankAccount
     {
         /// <summary>
-        /// Type of Bank Account is Silver
+        /// Constant number for calculating Bonus Points
         /// </summary>
-        public new BalanceType Type { get => BalanceType.Silver; }
-
-        /// <summary>
-        /// Overriding of base class method Refill according to BalanceType
-        /// </summary>        
-        /// <param name="amount">Amount value</param>        
-        /// <returns>Amount after refilling</returns>
-        public override decimal Refill(decimal amount)
+        private const decimal Bonus = 0.001M; 
+              
+        public override double CalculateBonusPoints(decimal amount)
         {
-            BonusPoints += 20;
-            return Amount += amount;
+            return BonusPoints = (double)((Amount * Bonus) + (amount * Bonus));
         }
 
-        /// <summary>
-        /// Overriding of base class method Debit according to BalanceType
-        /// </summary>        
-        /// <param name="amount">Amount value</param>        
-        /// <returns>Amount after write-off</returns>
-        public override decimal Debit(decimal amount)
+        public override bool IsValidBalance(BankAccount account, decimal amount)
         {
-            BonusPoints -= 20;
-            return Amount -= amount;
+            if ((Amount -= amount) < 500M)
+            {
+                return false;
+                throw new InvalidOperationException("The amount on this account cannot be less than 500");
+            }
+
+            return true;
         }
     }
 }
